@@ -276,11 +276,13 @@ export const logScan = (qrHash, payload, status, errorMessage = null) => {
 // Helper: Get recent scans for idempotency check
 export const getRecentScans = (qrHash, windowMinutes = 10) => {
   try {
-    const cutoffTime = new Date(Date.now() - windowMinutes * 60 * 1000).toISOString();
-
+    // Use SQLite's datetime functions for proper comparison
     const result = db.exec(
-      'SELECT * FROM scan_log WHERE qr_hash = ? AND timestamp > ? ORDER BY timestamp DESC',
-      [qrHash, cutoffTime]
+      `SELECT * FROM scan_log
+       WHERE qr_hash = ?
+       AND timestamp > datetime('now', '-${windowMinutes} minutes')
+       ORDER BY timestamp DESC`,
+      [qrHash]
     );
 
     if (result.length === 0) {
