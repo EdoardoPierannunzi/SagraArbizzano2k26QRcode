@@ -21,7 +21,7 @@ router.get('/', (req, res) => {
  * GET /api/admin/menu
  * Fetch menu for admin (requires auth)
  */
-router.get('/api/menu', verifyAdminPassword, (req, res) => {
+router.get('/menu', verifyAdminPassword, (req, res) => {
   try {
     const items = getAllItems();
     res.json({
@@ -40,7 +40,7 @@ router.get('/api/menu', verifyAdminPassword, (req, res) => {
  * PUT /api/admin/menu
  * Update menu items (requires auth)
  */
-router.put('/api/menu', verifyAdminPassword, (req, res) => {
+router.put('/menu', verifyAdminPassword, (req, res) => {
   try {
     const { items } = req.body;
 
@@ -76,7 +76,7 @@ router.put('/api/menu', verifyAdminPassword, (req, res) => {
  * POST /api/admin/items
  * Create new item (requires auth)
  */
-router.post('/api/items', verifyAdminPassword, (req, res) => {
+router.post('/items', verifyAdminPassword, (req, res) => {
   try {
     const { name, priceCents, category } = req.body;
 
@@ -109,7 +109,7 @@ router.post('/api/items', verifyAdminPassword, (req, res) => {
  * PUT /api/admin/items/:id
  * Update item (requires auth)
  */
-router.put('/api/items/:id', verifyAdminPassword, (req, res) => {
+router.put('/items/:id', verifyAdminPassword, (req, res) => {
   try {
     const { id } = req.params;
     const { name, priceCents, category, inStock } = req.body;
@@ -136,7 +136,7 @@ router.put('/api/items/:id', verifyAdminPassword, (req, res) => {
  * DELETE /api/admin/items/:id
  * Delete item (requires auth)
  */
-router.delete('/api/items/:id', verifyAdminPassword, (req, res) => {
+router.delete('/items/:id', verifyAdminPassword, (req, res) => {
   try {
     const { id } = req.params;
 
@@ -159,7 +159,7 @@ router.delete('/api/items/:id', verifyAdminPassword, (req, res) => {
  * POST /api/admin/menu-export
  * Export menu as JSON (requires auth)
  */
-router.post('/api/menu-export', verifyAdminPassword, (req, res) => {
+router.post('/menu-export', verifyAdminPassword, (req, res) => {
   try {
     const items = getAllItems();
     res.json({

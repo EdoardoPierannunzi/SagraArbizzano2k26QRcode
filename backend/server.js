@@ -98,6 +98,7 @@ app.get('/cashier', (req, res) => {
 
 // API routes (after HTML routes)
 app.use('/api', apiRoutes);
+app.use('/api/admin', adminRoutes);
 
 // ============================================
 // ERROR HANDLING
