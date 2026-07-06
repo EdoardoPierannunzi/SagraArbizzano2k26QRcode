@@ -2,7 +2,7 @@ import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { getAllItems, bulkUpdateItems } from '../db/database.js';
+import { getAllItems, bulkUpdateItems, getDatabase, saveDatabase } from '../db/database.js';
 import verifyAdminPassword from '../middleware/auth.js';
 
 const router = express.Router();
@@ -87,11 +87,12 @@ router.post('/items', verifyAdminPassword, (req, res) => {
       });
     }
 
-    const db = require('../db/database.js').getDatabase();
+    const db = getDatabase();
     db.run(
       'INSERT INTO items (name, price_cents, category, in_stock) VALUES (?, ?, ?, 1)',
       [name, parseInt(priceCents, 10), category || 'Uncategorized']
     );
+    saveDatabase();
 
     res.json({
       success: true,
@@ -114,11 +115,12 @@ router.put('/items/:id', verifyAdminPassword, (req, res) => {
     const { id } = req.params;
     const { name, priceCents, category, inStock } = req.body;
 
-    const db = require('../db/database.js').getDatabase();
+    const db = getDatabase();
     db.run(
       'UPDATE items SET name = ?, price_cents = ?, category = ?, in_stock = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
       [name, parseInt(priceCents, 10), category, inStock ? 1 : 0, parseInt(id, 10)]
     );
+    saveDatabase();
 
     res.json({
       success: true,
@@ -140,8 +142,9 @@ router.delete('/items/:id', verifyAdminPassword, (req, res) => {
   try {
     const { id } = req.params;
 
-    const db = require('../db/database.js').getDatabase();
+    const db = getDatabase();
     db.run('DELETE FROM items WHERE id = ?', [parseInt(id, 10)]);
+    saveDatabase();
 
     res.json({
       success: true,
