@@ -1,0 +1,137 @@
+[
+  {
+    "id": 101,
+    "name": "Margherita Pizza",
+    "price_cents": 1200,
+    "category": "Pizza",
+    "in_stock": true,
+    "created_at": "2026-01-01T00:00:00Z",
+    "updated_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": 102,
+    "name": "Pepperoni Pizza",
+    "price_cents": 1500,
+    "category": "Pizza",
+    "in_stock": true,
+    "created_at": "2026-01-01T00:00:00Z",
+    "updated_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": 103,
+    "name": "Quattro Formaggi",
+    "price_cents": 1400,
+    "category": "Pizza",
+    "in_stock": true,
+    "created_at": "2026-01-01T00:00:00Z",
+    "updated_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": 201,
+    "name": "Classic Burger",
+    "price_cents": 900,
+    "category": "Burgers",
+    "in_stock": true,
+    "created_at": "2026-01-01T00:00:00Z",
+    "updated_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": 202,
+    "name": "Double Cheeseburger",
+    "price_cents": 1100,
+    "category": "Burgers",
+    "in_stock": true,
+    "created_at": "2026-01-01T00:00:00Z",
+    "updated_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": 203,
+    "name": "BBQ Bacon Burger",
+    "price_cents": 1300,
+    "category": "Burgers",
+    "in_stock": true,
+    "created_at": "2026-01-01T00:00:00Z",
+    "updated_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": 301,
+    "name": "Pasta Carbonara",
+    "price_cents": 1100,
+    "category": "Pasta",
+    "in_stock": true,
+    "created_at": "2026-01-01T00:00:00Z",
+    "updated_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": 302,
+    "name": "Pasta Bolognese",
+    "price_cents": 1000,
+    "category": "Pasta",
+    "in_stock": true,
+    "created_at": "2026-01-01T00:00:00Z",
+    "updated_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": 401,
+    "name": "Caesar Salad",
+    "price_cents": 700,
+    "category": "Salads",
+    "in_stock": true,
+    "created_at": "2026-01-01T00:00:00Z",
+    "updated_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": 402,
+    "name": "Greek Salad",
+    "price_cents": 750,
+    "category": "Salads",
+    "in_stock": true,
+    "created_at": "2026-01-01T00:00:00Z",
+    "updated_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": 501,
+    "name": "Coca Cola (330ml)",
+    "price_cents": 250,
+    "category": "Beverages",
+    "in_stock": true,
+    "created_at": "2026-01-01T00:00:00Z",
+    "updated_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": 502,
+    "name": "Orange Juice (250ml)",
+    "price_cents": 300,
+    "category": "Beverages",
+    "in_stock": true,
+    "created_at": "2026-01-01T00:00:00Z",
+    "updated_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": 503,
+    "name": "Water (500ml)",
+    "price_cents": 150,
+    "category": "Beverages",
+    "in_stock": true,
+    "created_at": "2026-01-01T00:00:00Z",
+    "updated_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": 601,
+    "name": "Tiramisu",
+    "price_cents": 500,
+    "category": "Desserts",
+    "in_stock": true,
+    "created_at": "2026-01-01T00:00:00Z",
+    "updated_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": 602,
+    "name": "Panna Cotta",
+    "price_cents": 450,
+    "category": "Desserts",
+    "in_stock": true,
+    "created_at": "2026-01-01T00:00:00Z",
+    "updated_at": "2026-01-01T00:00:00Z"
+  }
+]

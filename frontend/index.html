@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="SagraQRCode - Offline QR Ordering" />
+    <meta name="theme-color" content="#3b82f6" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <title>SagraQRCode - Order Now</title>
+
+    <!-- Manifest for PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect fill='%233b82f6' width='64' height='64'/%3E%3Ctext x='50%25' y='50%25' font-size='40' font-weight='bold' text-anchor='middle' dominant-baseline='middle' fill='white'%3EQR%3C/text%3E%3C/svg%3E" />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <div class="header-content">
+          <h1 class="header-title">🎉 SagraQRCode</h1>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <div id="status-indicator" class="status-indicator online"></div>
+            <span id="status-text" style="font-size: 0.875rem; color: var(--gray-600);">Online</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container" style="padding-top: 2rem; padding-bottom: 2rem;">
+      <!-- Alerts -->
+      <div id="alerts-container" style="margin-bottom: 2rem;"></div>
+
+      <!-- Content Grid -->
+      <div style="display: grid; grid-template-columns: 1fr 400px; gap: 2rem; align-items: start;">
+        <!-- Menu Section -->
+        <section>
+          <div class="card" style="margin-bottom: 2rem;">
+            <h2 class="card-title" style="margin-bottom: 1rem;">📋 Menu</h2>
+            <p style="color: var(--gray-600); font-size: 0.875rem;">
+              Select items and add to cart. Your selections are saved automatically.
+            </p>
+          </div>
+
+          <div id="menu-container" class="grid grid-3">
+            <!-- Menu items will be rendered here -->
+            <p style="text-align: center; color: var(--gray-500); grid-column: 1 / -1;">
+              Loading menu...
+            </p>
+          </div>
+        </section>
+
+        <!-- Cart Sidebar -->
+        <aside>
+          <div class="cart" id="cart-container">
+            <!-- Cart will be rendered here -->
+            <div class="cart-empty">
+              <p>🛒 Your cart is empty</p>
+              <p style="font-size: 0.875rem; color: var(--gray-400);">Add items to get started</p>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>🌐 Works offline after first load • 🔒 All orders processed locally</p>
+      <p style="font-size: 0.75rem; margin-top: 0.5rem; color: var(--gray-500);">
+        v1.0 • For food festivals & high-traffic events
+      </p>
+    </footer>
+
+    <!-- QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <!-- App Scripts -->
+    <script type="module" src="/js/app.js"></script>
+  </body>
+</html>
