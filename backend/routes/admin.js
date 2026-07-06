@@ -73,6 +73,89 @@ router.put('/api/menu', verifyAdminPassword, (req, res) => {
 });
 
 /**
+ * POST /api/admin/items
+ * Create new item (requires auth)
+ */
+router.post('/api/items', verifyAdminPassword, (req, res) => {
+  try {
+    const { name, priceCents, category } = req.body;
+
+    if (!name || !priceCents) {
+      return res.status(400).json({
+        success: false,
+        error: 'Name and priceCents required',
+      });
+    }
+
+    const db = require('../db/database.js').getDatabase();
+    db.run(
+      'INSERT INTO items (name, price_cents, category, in_stock) VALUES (?, ?, ?, 1)',
+      [name, parseInt(priceCents, 10), category || 'Uncategorized']
+    );
+
+    res.json({
+      success: true,
+      message: 'Item created',
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+/**
+ * PUT /api/admin/items/:id
+ * Update item (requires auth)
+ */
+router.put('/api/items/:id', verifyAdminPassword, (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, priceCents, category, inStock } = req.body;
+
+    const db = require('../db/database.js').getDatabase();
+    db.run(
+      'UPDATE items SET name = ?, price_cents = ?, category = ?, in_stock = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+      [name, parseInt(priceCents, 10), category, inStock ? 1 : 0, parseInt(id, 10)]
+    );
+
+    res.json({
+      success: true,
+      message: 'Item updated',
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+/**
+ * DELETE /api/admin/items/:id
+ * Delete item (requires auth)
+ */
+router.delete('/api/items/:id', verifyAdminPassword, (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const db = require('../db/database.js').getDatabase();
+    db.run('DELETE FROM items WHERE id = ?', [parseInt(id, 10)]);
+
+    res.json({
+      success: true,
+      message: 'Item deleted',
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+/**
  * POST /api/admin/menu-export
  * Export menu as JSON (requires auth)
  */
