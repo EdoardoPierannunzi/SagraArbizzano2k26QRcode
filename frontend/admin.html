@@ -6,6 +6,31 @@
     <meta name="description" content="SagraQRCode Admin Dashboard" />
     <title>Admin Dashboard - SagraQRCode</title>
     <link rel="stylesheet" href="/css/styles.css" />
+    <style>
+      .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1rem; }
+      .item-card { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 1rem; }
+      .item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+      .item-id { font-size: 0.75rem; color: #666; }
+      .item-price { font-weight: bold; color: #3b82f6; font-size: 1.2rem; }
+      .item-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 1rem; }
+      input[type="text"], input[type="number"], input[type="password"] { width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; }
+      .btn { padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+      .btn-primary { background: #3b82f6; color: white; }
+      .btn-primary:hover { background: #1d4ed8; }
+      .btn-danger { background: #ef4444; color: white; }
+      .btn-danger:hover { background: #dc2626; }
+      .btn-success { background: #10b981; color: white; }
+      .btn-success:hover { background: #059669; }
+      .auth-form { max-width: 400px; margin: 3rem auto; padding: 2rem; background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+      .alert { padding: 1rem; border-radius: 4px; margin-bottom: 1rem; }
+      .alert-success { background: #d1fae5; color: #065f46; border-left: 4px solid #10b981; }
+      .alert-danger { background: #fee2e2; color: #991b1b; border-left: 4px solid #ef4444; }
+      .alert-info { background: #dbeafe; color: #0c2340; border-left: 4px solid #3b82f6; }
+      .add-item-form { background: #f0f9ff; border: 2px solid #3b82f6; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; }
+      .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem; }
+      .form-group { display: flex; flex-direction: column; }
+      .form-group label { font-size: 0.875rem; font-weight: bold; color: #666; margin-bottom: 0.25rem; }
+    </style>
   </head>
 
   <body>
@@ -14,64 +39,253 @@
       <div class="container">
         <div class="header-content">
           <h1 class="header-title">🔐 Admin Dashboard</h1>
-          <button class="btn btn-danger btn-small" id="logout-btn">Logout</button>
+          <button class="btn btn-danger" id="logout-btn" style="display: none;">Logout</button>
         </div>
       </div>
     </header>
 
-    <!-- Main Content -->
     <main class="container" style="padding: 2rem 0;">
-      <div id="auth-form" style="display: none;">
-        <div class="card" style="max-width: 400px; margin: 2rem auto;">
-          <h2 class="card-title" style="margin-bottom: 1.5rem;">Enter Admin Password</h2>
+      <!-- Auth Form -->
+      <div id="auth-container">
+        <div class="auth-form">
+          <h2 style="margin-bottom: 1.5rem;">Admin Password Required</h2>
           <div style="margin-bottom: 1rem;">
-            <input
-              type="password"
-              id="admin-password"
-              placeholder="Admin password"
-              style="width: 100%;"
-              autocomplete="off"
-            />
+            <input type="password" id="admin-password" placeholder="Enter password" style="width: 100%; padding: 0.75rem;">
           </div>
-          <button class="btn btn-primary" style="width: 100%;" id="submit-password-btn">
-            Submit
-          </button>
+          <button class="btn btn-primary" onclick="authenticate()" style="width: 100%; padding: 0.75rem;">Submit</button>
         </div>
       </div>
 
-      <div id="dashboard-content" style="display: none;">
-        <!-- Alerts -->
-        <div id="alerts-container" style="margin-bottom: 2rem;"></div>
+      <!-- Dashboard -->
+      <div id="dashboard-container" style="display: none;">
+        <div id="alerts"></div>
 
-        <!-- Menu Management Section -->
-        <div class="card" style="margin-bottom: 2rem;">
-          <div class="card-header">
-            <h2 class="card-title">📋 Menu Management</h2>
-            <div style="display: flex; gap: 1rem;">
-              <button class="btn btn-success btn-small" id="refresh-menu-btn">Refresh</button>
-              <button class="btn btn-primary btn-small" id="export-menu-btn">Export</button>
+        <!-- Add Item Form -->
+        <div class="add-item-form">
+          <h3 style="margin-bottom: 1rem;">➕ Add New Item</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Item Name</label>
+              <input type="text" id="new-name" placeholder="e.g., Margherita Pizza">
+            </div>
+            <div class="form-group">
+              <label>Price (€)</label>
+              <input type="number" id="new-price" placeholder="12.00" step="0.01" min="0">
+            </div>
+            <div class="form-group">
+              <label>Category</label>
+              <input type="text" id="new-category" placeholder="e.g., Pizza">
+            </div>
+            <div class="form-group" style="justify-content: flex-end;">
+              <button class="btn btn-success" onclick="addNewItem()" style="padding: 0.75rem 1.5rem;">Add Item</button>
             </div>
           </div>
+        </div>
 
-          <div id="menu-list" style="max-height: 600px; overflow-y: auto;">
-            <p style="text-align: center; color: var(--gray-500);">Loading menu...</p>
-          </div>
+        <!-- Menu Items -->
+        <h2 style="margin-bottom: 1rem;">📋 Menu Management</h2>
+        <div id="menu-container" class="menu-grid">
+          <p style="text-align: center; color: #666; grid-column: 1 / -1;">Loading menu...</p>
+        </div>
 
-          <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--gray-200);">
-            <button class="btn btn-primary" style="width: 100%;" id="save-menu-btn">
-              Save Changes
-            </button>
-          </div>
+        <!-- Save Button -->
+        <div style="text-align: center; margin-top: 2rem;">
+          <button class="btn btn-primary" onclick="saveMenu()" style="padding: 0.75rem 2rem; font-size: 1rem;">💾 Save All Changes</button>
         </div>
       </div>
     </main>
 
-    <!-- Footer -->
     <footer class="footer">
       <p>Admin Dashboard • v1.0</p>
     </footer>
 
-    <!-- Scripts -->
-    <script type="module" src="/js/admin-panel.js"></script>
+    <script>
+      let password = localStorage.getItem('admin_password');
+      let items = [];
+
+      function showAlert(msg, type = 'info') {
+        const alertDiv = document.getElementById('alerts');
+        const alert = document.createElement('div');
+        alert.className = `alert alert-${type}`;
+        alert.textContent = msg;
+        alertDiv.innerHTML = '';
+        alertDiv.appendChild(alert);
+        setTimeout(() => alertDiv.innerHTML = '', 5000);
+      }
+
+      async function authenticate() {
+        const pwd = document.getElementById('admin-password').value;
+        if (!pwd) {
+          showAlert('Please enter password', 'danger');
+          return;
+        }
+
+        try {
+          const res = await fetch('/api/admin/menu', {
+            headers: { 'X-Admin-Password': pwd }
+          });
+
+          if (!res.ok) throw new Error('Invalid password');
+
+          localStorage.setItem('admin_password', pwd);
+          password = pwd;
+          document.getElementById('auth-container').style.display = 'none';
+          document.getElementById('dashboard-container').style.display = 'block';
+          document.getElementById('logout-btn').style.display = 'block';
+          loadMenu();
+        } catch (e) {
+          showAlert('Authentication failed', 'danger');
+        }
+      }
+
+      async function loadMenu() {
+        try {
+          const res = await fetch('/api/admin/menu', {
+            headers: { 'X-Admin-Password': password }
+          });
+          const data = await res.json();
+          items = data.items || [];
+          renderMenu();
+          showAlert(`✓ Loaded ${items.length} items`, 'success');
+        } catch (e) {
+          showAlert('Failed to load menu', 'danger');
+        }
+      }
+
+      function renderMenu() {
+        const container = document.getElementById('menu-container');
+        const categories = [...new Set(items.map(i => i.category || 'Uncategorized'))];
+
+        let html = '';
+        for (const cat of categories) {
+          const catItems = items.filter(i => (i.category || 'Uncategorized') === cat);
+          html += `<h3 style="grid-column: 1 / -1; margin-top: 1.5rem;">${cat}</h3>`;
+
+          for (const item of catItems) {
+            const priceEur = (item.price_cents / 100).toFixed(2);
+            html += `
+              <div class="item-card" data-id="${item.id}">
+                <div class="item-header">
+                  <div>
+                    <div style="font-weight: bold; font-size: 1.1rem;">${item.name}</div>
+                    <div class="item-id">ID: ${item.id}</div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div class="item-price">€${priceEur}</div>
+                  </div>
+                </div>
+
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; margin-bottom: 1rem;">
+                  <input type="checkbox" class="stock-check" ${item.in_stock ? 'checked' : ''}>
+                  <span>In Stock</span>
+                </label>
+
+                <button class="btn btn-danger" onclick="deleteItem(${item.id})" style="width: 100%;">🗑️ Delete</button>
+              </div>
+            `;
+          }
+        }
+
+        container.innerHTML = html || '<p style="text-align: center; color: #666;">No items found</p>';
+      }
+
+      async function addNewItem() {
+        const name = document.getElementById('new-name').value.trim();
+        const price = parseFloat(document.getElementById('new-price').value);
+        const category = document.getElementById('new-category').value.trim();
+
+        if (!name || !price || price <= 0) {
+          showAlert('Please fill all fields correctly', 'danger');
+          return;
+        }
+
+        try {
+          const res = await fetch('/api/admin/items', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Admin-Password': password
+            },
+            body: JSON.stringify({
+              name,
+              priceCents: Math.round(price * 100),
+              category
+            })
+          });
+
+          if (!res.ok) throw new Error('Failed to add item');
+
+          document.getElementById('new-name').value = '';
+          document.getElementById('new-price').value = '';
+          document.getElementById('new-category').value = '';
+
+          showAlert('✓ Item added! Reloading...', 'success');
+          setTimeout(() => loadMenu(), 500);
+        } catch (e) {
+          showAlert('Error: ' + e.message, 'danger');
+        }
+      }
+
+      async function deleteItem(id) {
+        if (!confirm('Delete this item forever?')) return;
+
+        try {
+          const res = await fetch(`/api/admin/items/${id}`, {
+            method: 'DELETE',
+            headers: { 'X-Admin-Password': password }
+          });
+
+          if (!res.ok) throw new Error('Failed to delete');
+
+          showAlert('✓ Item deleted! Reloading...', 'success');
+          setTimeout(() => loadMenu(), 500);
+        } catch (e) {
+          showAlert('Error: ' + e.message, 'danger');
+        }
+      }
+
+      async function saveMenu() {
+        const updates = [];
+        document.querySelectorAll('.item-card').forEach(card => {
+          const id = parseInt(card.dataset.id);
+          const inStock = card.querySelector('.stock-check').checked;
+          updates.push({ id, in_stock: inStock });
+        });
+
+        try {
+          const res = await fetch('/api/admin/menu', {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Admin-Password': password
+            },
+            body: JSON.stringify({ items: updates })
+          });
+
+          const data = await res.json();
+          showAlert(`✓ Saved ${data.itemsUpdated} items`, 'success');
+        } catch (e) {
+          showAlert('Error: ' + e.message, 'danger');
+        }
+      }
+
+      document.getElementById('logout-btn').onclick = () => {
+        localStorage.removeItem('admin_password');
+        location.reload();
+      };
+
+      // Auto-login if password in storage
+      if (password) {
+        document.getElementById('auth-container').style.display = 'none';
+        document.getElementById('dashboard-container').style.display = 'block';
+        document.getElementById('logout-btn').style.display = 'block';
+        loadMenu();
+      }
+
+      // Auto-submit on Enter
+      document.getElementById('admin-password')?.addEventListener('keypress', e => {
+        if (e.key === 'Enter') authenticate();
+      });
+    </script>
   </body>
 </html>
