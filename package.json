@@ -1,0 +1,24 @@
+{
+  "name": "sagra-qr-code",
+  "version": "1.0.0",
+  "description": "Stateless QR Code Ordering System for high-traffic food festivals (5000+ attendees/night)",
+  "main": "backend/server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "cd backend && node server.js",
+    "start": "cd backend && node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "qr-code",
+    "offline",
+    "pwa",
+    "pos",
+    "food-festival"
+  ],
+  "author": "Edoardo Pierannunzi",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
