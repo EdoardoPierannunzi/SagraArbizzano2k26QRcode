@@ -5,6 +5,51 @@ import * as idempotencyService from '../services/idempotencyService.js';
 
 const router = express.Router();
 
+// Send order to POS system webhook
+const sendToPOSSystem = async (order) => {
+  const webhookUrl = process.env.POS_WEBHOOK_URL;
+
+  if (!webhookUrl) {
+    console.log('⚠️ [POS] No webhook URL configured. Skipping POS notification.');
+    return { success: false, reason: 'No webhook configured' };
+  }
+
+  try {
+    console.log(`📤 [POS] Sending order #${order.id} to: ${webhookUrl}`);
+
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Sagra-Secret': process.env.POS_WEBHOOK_SECRET || 'sagra-secret-key',
+        'X-Order-ID': order.id.toString(),
+      },
+      body: JSON.stringify({
+        orderId: order.id,
+        qrHash: order.qr_hash,
+        totalCents: order.total_cents,
+        totalEur: (order.total_cents / 100).toFixed(2),
+        items: order.items,
+        timestamp: new Date().toISOString(),
+      }),
+    });
+
+    if (!response.ok) {
+      console.warn(
+        `⚠️ [POS] Webhook failed: ${response.status} ${response.statusText}`
+      );
+      return { success: false, error: `HTTP ${response.status}` };
+    }
+
+    const result = await response.json();
+    console.log(`✓ [POS] Order sent successfully`);
+    return { success: true, result };
+  } catch (error) {
+    console.error(`✗ [POS] Webhook error: ${error.message}`);
+    return { success: false, error: error.message };
+  }
+};
+
 /**
  * GET /api/menu
  * Fetch all menu items (for PWA sync)
@@ -147,12 +192,26 @@ router.post('/process-qr', (req, res) => {
       null
     );
 
+    // Prepare order data for POS system
+    const orderData = {
+      id: orderId,
+      qr_hash: validation.qrHash,
+      total_cents: validation.totalCents,
+      items: validation.items,
+    };
+
+    // Send to POS system (async, don't block response)
+    sendToPOSSystem(orderData).catch(err => {
+      console.error('[API] POS webhook error:', err);
+    });
+
     res.status(201).json({
       success: true,
       orderId,
       qrHash: validation.qrHash,
       totalCents: validation.totalCents,
-      message: 'Order created successfully',
+      itemsCount: validation.items.length,
+      message: 'Order processed and sent to POS system',
     });
   } catch (error) {
     res.status(500).json({
