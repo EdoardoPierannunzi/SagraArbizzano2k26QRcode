@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git init *)",
+      "Bash(git config *)",
+      "Bash(git add *)",
+      "Bash(git commit -m 'chore: initialize project structure and architecture documentation *)",
+      "Bash(git commit -m 'feat: implement complete backend infrastructure *)",
+      "Bash(git commit -m 'feat: implement complete PWA frontend with admin & cashier UIs *)",
+      "Bash(git commit -m 'docs: add comprehensive setup guide and update project state *)",
+      "Bash(git commit -m 'docs: add comprehensive implementation summary *)",
+      "Bash(git commit -m 'fix: switch from better-sqlite3 to sql.js for Windows compatibility *)",
+      "Bash(git commit -m 'fix: make server initialization async for sql.js *)",
+      "Bash(git commit -m 'feat: add POS system webhook integration *)",
+      "Bash(git commit -m 'docs: add comprehensive POS integration guide *)",
+      "Bash(git commit -m 'docs: add comprehensive audit and deployment guides *)",
+      "Bash(git commit -m 'feat: complete menu management system in admin dashboard *)",
+      "Bash(git commit -m 'fix: resolve HTML routing and auto-load seed menu *)",
+      "Bash(git commit -m 'fix: simplify admin dashboard with inline JavaScript *)",
+      "Bash(node tests/test-qr-validator.js)",
+      "Bash(node tests/test-database.js)",
+      "Bash(rm sagra.sqlite)",
+      "Bash(node tests/test-idempotency.js)",
+      "Bash(node tests/test-cart-logic.js)",
+      "Bash(git commit -m 'docs: update PROJECT_STATE.md with debugging results and stability verification *)",
+      "Bash(timeout 10 node server.js)",
+      "Bash(node tests/test-e2e.js)",
+      "Bash(git commit -m 'docs: add comprehensive debugging and stabilization report *)",
+      "Bash(git commit -m 'fix: mount admin routes and correct route paths *)",
+      "Bash(git commit -m 'fix: use ES modules instead of CommonJS in admin routes *)"
+    ]
+  }
+}

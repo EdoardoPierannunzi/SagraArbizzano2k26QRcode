@@ -121,34 +121,62 @@
         }
 
         try {
+          console.log('[Auth] Attempting login with password...');
           const res = await fetch('/api/admin/menu', {
             headers: { 'X-Admin-Password': pwd }
           });
 
-          if (!res.ok) throw new Error('Invalid password');
+          console.log('[Auth] Response status:', res.status);
+
+          if (res.status === 401) {
+            showAlert('❌ Invalid password', 'danger');
+            console.error('[Auth] Password rejected (401)');
+            return;
+          }
+
+          if (!res.ok) {
+            const data = await res.json();
+            throw new Error(`Server error: ${data.error}`);
+          }
+
+          const data = await res.json();
+          console.log('[Auth] Login successful, items:', data.items?.length);
 
           localStorage.setItem('admin_password', pwd);
           password = pwd;
           document.getElementById('auth-container').style.display = 'none';
           document.getElementById('dashboard-container').style.display = 'block';
           document.getElementById('logout-btn').style.display = 'block';
+          showAlert('✓ Login successful!', 'success');
           loadMenu();
         } catch (e) {
-          showAlert('Authentication failed', 'danger');
+          console.error('[Auth] Error:', e);
+          showAlert('Authentication failed: ' + e.message, 'danger');
         }
       }
 
       async function loadMenu() {
         try {
+          console.log('[Menu] Loading menu with password:', password?.substring(0,3) + '***');
           const res = await fetch('/api/admin/menu', {
             headers: { 'X-Admin-Password': password }
           });
+          console.log('[Menu] Response status:', res.status);
+
+          if (!res.ok) {
+            throw new Error(`HTTP ${res.status}`);
+          }
+
           const data = await res.json();
+          console.log('[Menu] Received items:', data);
+
           items = data.items || [];
+          console.log('[Menu] Rendering', items.length, 'items');
           renderMenu();
           showAlert(`✓ Loaded ${items.length} items`, 'success');
         } catch (e) {
-          showAlert('Failed to load menu', 'danger');
+          console.error('[Menu] Error:', e);
+          showAlert('Failed to load menu: ' + e.message, 'danger');
         }
       }
 

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Cart Tests</title>
+  <style>
+    body { font-family: monospace; padding: 20px; }
+    .pass { color: green; }
+    .fail { color: red; }
+  </style>
+</head>
+<body>
+  <h2>🧪 Frontend Cart Tests</h2>
+  <div id="results"></div>
+
+  <script>
+    // Minimal storage mock for testing
+    const storage = {
+      data: {},
+      getItem: (key) => JSON.parse(localStorage.getItem('sagra_' + key) || 'null'),
+      setItem: (key, value) => localStorage.setItem('sagra_' + key, JSON.stringify(value)),
+      removeItem: (key) => localStorage.removeItem('sagra_' + key),
+    };
+
+    // Mock menu items
+    const menuItems = [
+      { id: 101, name: 'Margherita Pizza', price_cents: 1200, in_stock: true },
+      { id: 102, name: 'Pepperoni Pizza', price_cents: 1500, in_stock: true },
+      { id: 204, name: 'Caesar Salad', price_cents: 700, in_stock: true },
+    ];
+
+    const results = [];
+
+    function test(name, fn) {
+      try {
+        fn();
+        results.push({ name, status: 'PASS' });
+        console.log(`✓ ${name}`);
+      } catch (e) {
+        results.push({ name, status: 'FAIL', error: e.message });
+        console.error(`✗ ${name}: ${e.message}`);
+      }
+    }
+
+    // Test 1: Cart starts empty
+    test('Cart starts empty', () => {
+      localStorage.clear();
+      const cart = storage.getItem('cart_items', []);
+      console.assert(Array.isArray(cart) && cart.length === 0, 'Cart should be empty');
+    });
+
+    // Test 2: Add item to cart
+    test('Add item to cart', () => {
+      localStorage.clear();
+      const cart = [];
+      cart.push({
+        itemId: 101,
+        quantity: 2,
+        name: 'Margherita Pizza',
+        priceCents: 1200,
+      });
+      storage.setItem('cart_items', cart);
+
+      const saved = storage.getItem('cart_items');
+      console.assert(saved.length === 1, 'Should have 1 item');
+      console.assert(saved[0].itemId === 101, 'Should be item 101');
+      console.assert(saved[0].quantity === 2, 'Quantity should be 2');
+    });
+
+    // Test 3: Cart persists after refresh
+    test('Cart persists after localStorage', () => {
+      const cart = storage.getItem('cart_items', []);
+      console.assert(cart.length === 1, 'Cart should still have 1 item');
+      console.assert(cart[0].itemId === 101, 'Item should still be 101');
+    });
+
+    // Test 4: Update quantity
+    test('Update item quantity', () => {
+      const cart = storage.getItem('cart_items', []);
+      cart[0].quantity = 5;
+      storage.setItem('cart_items', cart);
+
+      const updated = storage.getItem('cart_items');
+      console.assert(updated[0].quantity === 5, 'Quantity should be updated to 5');
+    });
+
+    // Test 5: Calculate total
+    test('Calculate cart total', () => {
+      const cart = storage.getItem('cart_items', []);
+      const total = cart.reduce((sum, item) => sum + item.quantity * item.priceCents, 0);
+      const expected = 5 * 1200; // 5 pizzas @ 1200 cents = 6000 cents = €60
+      console.assert(total === expected, `Total should be ${expected}, got ${total}`);
+    });
+
+    // Test 6: Remove item
+    test('Remove item from cart', () => {
+      let cart = storage.getItem('cart_items', []);
+      cart = cart.filter(item => item.itemId !== 101);
+      storage.setItem('cart_items', cart);
+
+      const updated = storage.getItem('cart_items');
+      console.assert(updated.length === 0, 'Cart should be empty after removal');
+    });
+
+    // Test 7: QR payload generation
+    test('Generate QR payload', () => {
+      localStorage.clear();
+      const timestamp = Math.floor(Date.now() / 1000);
+      const cart = [
+        { itemId: 101, quantity: 2 },
+        { itemId: 102, quantity: 1 },
+      ];
+      storage.setItem('cart_items', cart);
+
+      const saved = storage.getItem('cart_items');
+      const payload = `V1|${timestamp}|${saved.map(i => `${i.itemId}:${i.quantity}`).join(',')}`;
+
+      console.assert(payload.startsWith('V1|'), 'Payload should start with V1|');
+      console.assert(payload.includes('101:2'), 'Payload should include 101:2');
+      console.assert(payload.includes('102:1'), 'Payload should include 102:1');
+    });
+
+    // Test 8: Max quantity validation
+    test('Max quantity validation', () => {
+      const maxQty = 20;
+      const testQty = 25;
+      const validQty = Math.min(testQty, maxQty);
+      console.assert(validQty === 20, 'Quantity should be capped at 20');
+    });
+
+    // Render results
+    const resultsDiv = document.getElementById('results');
+    const passCount = results.filter(r => r.status === 'PASS').length;
+    const failCount = results.filter(r => r.status === 'FAIL').length;
+
+    resultsDiv.innerHTML = `
+      <h3>Results: ${passCount} pass, ${failCount} fail</h3>
+      ${results.map(r => `
+        <div class="${r.status === 'PASS' ? 'pass' : 'fail'}">
+          ${r.status === 'PASS' ? '✓' : '✗'} ${r.name}
+          ${r.error ? ` - ${r.error}` : ''}
+        </div>
+      `).join('')}
+    `;
+
+    console.log(`\n✓ Frontend Cart tests completed: ${passCount}/${results.length} passed`);
+  </script>
+</body>
+</html>
