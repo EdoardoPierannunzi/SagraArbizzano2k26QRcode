@@ -29,14 +29,20 @@ const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || '0.0.0.0';
 
 // ============================================
-// DATABASE INITIALIZATION
+// DATABASE INITIALIZATION (async)
 // ============================================
-try {
-  initializeDatabase();
-} catch (error) {
-  logger.error('Failed to initialize database:', error);
-  process.exit(1);
-}
+let dbInitialized = false;
+
+const initDB = async () => {
+  try {
+    await initializeDatabase();
+    dbInitialized = true;
+    console.log('✓ Database ready');
+  } catch (error) {
+    logger.error('Failed to initialize database:', error);
+    process.exit(1);
+  }
+};
 
 // ============================================
 // MIDDLEWARE SETUP
@@ -124,25 +130,36 @@ scheduleAutoBackup(dbPath, backupDir, backupInterval);
 // START SERVER
 // ============================================
 
-const server = app.listen(PORT, HOST, () => {
-  logger.info(`🚀 Server started on http://${HOST}:${PORT}`);
-  logger.info(`📱 Frontend: http://${HOST}:${PORT}`);
-  logger.info(`🔐 Admin Dashboard: http://${HOST}:${PORT}/admin-dashboard`);
-  logger.info(`💳 Cashier System: http://${HOST}:${PORT}/cashier`);
-});
+const startServer = async () => {
+  // Initialize database first
+  await initDB();
 
-// Graceful shutdown
-process.on('SIGINT', () => {
-  logger.info('Server shutting down...');
-  server.close(() => {
-    logger.info('Server stopped');
-    process.exit(0);
+  const server = app.listen(PORT, HOST, () => {
+    logger.info(`🚀 Server started on http://${HOST}:${PORT}`);
+    logger.info(`📱 Frontend: http://${HOST}:${PORT}`);
+    logger.info(`🔐 Admin Dashboard: http://${HOST}:${PORT}/admin-dashboard`);
+    logger.info(`💳 Cashier System: http://${HOST}:${PORT}/cashier`);
   });
-});
 
-// Unhandled rejection catcher
-process.on('unhandledRejection', err => {
-  logger.error('Unhandled Rejection:', err);
+  // Graceful shutdown
+  process.on('SIGINT', () => {
+    logger.info('Server shutting down...');
+    server.close(() => {
+      logger.info('Server stopped');
+      process.exit(0);
+    });
+  });
+
+  // Unhandled rejection catcher
+  process.on('unhandledRejection', err => {
+    logger.error('Unhandled Rejection:', err);
+    process.exit(1);
+  });
+};
+
+// Start the server
+startServer().catch(err => {
+  logger.error('Failed to start server:', err);
   process.exit(1);
 });
 
