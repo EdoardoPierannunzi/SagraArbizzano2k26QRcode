@@ -83,16 +83,7 @@ app.use(express.static(publicPath));
 // ROUTES
 // ============================================
 
-// API routes
-app.use('/api', apiRoutes);
-
-// Cashier routes
-app.use('/cashier', cashierRoutes);
-
-// Admin routes
-app.use('/admin-dashboard', adminRoutes);
-
-// Serve HTML files
+// Serve HTML files (before other routes)
 app.get('/', (req, res) => {
   res.sendFile(path.join(publicPath, 'index.html'));
 });
@@ -104,6 +95,9 @@ app.get('/admin-dashboard', (req, res) => {
 app.get('/cashier', (req, res) => {
   res.sendFile(path.join(publicPath, 'cashier.html'));
 });
+
+// API routes (after HTML routes)
+app.use('/api', apiRoutes);
 
 // ============================================
 // ERROR HANDLING

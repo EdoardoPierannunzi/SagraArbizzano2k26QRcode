@@ -52,6 +52,32 @@ export const initializeDatabase = async () => {
     // Save to disk
     saveDatabase();
 
+    // Load seed data if database is empty
+    const itemCount = db.exec('SELECT COUNT(*) as count FROM items');
+    const count = itemCount.length > 0 ? itemCount[0].values[0][0] : 0;
+
+    if (count === 0) {
+      console.log('📥 Database empty, loading seed menu...');
+      try {
+        const menuPath = path.join(__dirname, '..', '..', 'public', 'menu.json');
+        if (fs.existsSync(menuPath)) {
+          const menuData = JSON.parse(fs.readFileSync(menuPath, 'utf8'));
+
+          for (const item of menuData) {
+            db.run(
+              'INSERT INTO items (id, name, price_cents, category, in_stock) VALUES (?, ?, ?, ?, ?)',
+              [item.id, item.name, item.price_cents, item.category, item.in_stock ? 1 : 0]
+            );
+          }
+
+          saveDatabase();
+          console.log(`✓ Loaded ${menuData.length} items from menu.json`);
+        }
+      } catch (error) {
+        console.warn('⚠️ Could not load seed menu:', error.message);
+      }
+    }
+
     console.log('✓ Database schema initialized');
     return true;
   } catch (error) {
